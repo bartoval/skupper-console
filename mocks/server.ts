@@ -104,6 +104,27 @@ mockRoutersForPerf.forEach((_, index) => {
   );
 });
 
+const mockProcessesForPerf: any[] = [];
+for (let i = 0; i < ITEMS_TEST; i++) {
+  const parent = Math.floor(Math.random() * (4 - 1 + 1) + 1);
+
+  mockProcessesForPerf.push({
+    recType: 'PROCESS',
+    identity: `processPerf${i}`,
+    parent: `site-${parent}`,
+    startTime: 1674048729000000,
+    endTime: 0,
+    name: `process ${i}`,
+    parentName: `site ${parent}`,
+    imageName: 'gcr.io/google-samples/microservices-demo/process-za:v0.3.0',
+    groupName: 'component 1',
+    groupIdentity: 'group-1',
+    hostName: '10.242.0.5',
+    sourceHost: '172.17.63.163',
+    processRole: 'external'
+  });
+}
+
 // api functions
 export const MockApi = {
   get500Error: () => new Response(500),
@@ -137,6 +158,12 @@ export const MockApi = {
     const results = processGroups.results.find(({ identity }: ProcessGroupResponse) => identity === id);
 
     return { results };
+  },
+  getProcesses: () => {
+    const processesForPerfTests = PERF_TEST ? mockProcessesForPerf : [];
+    const results = [...processes.results, ...processesForPerfTests];
+
+    return { ...processes, results };
   }
 };
 
@@ -147,6 +174,7 @@ export const MockApiPaths = {
   Site: `${prefix}/sites/:id`,
   Components: `${prefix}/processgroups`,
   Component: `${prefix}/processgroups/:id`,
+  Processes: `${prefix}/processes`,
   Routers: `${prefix}/routers`,
   Links: `${prefix}/links`
 };
@@ -173,6 +201,7 @@ export function loadMockServer() {
       this.get(MockApiPaths.Links, MockApi.getLinks);
       this.get(MockApiPaths.Components, MockApi.getComponents);
       this.get(MockApiPaths.Component, MockApi.getComponent);
+      this.get(MockApiPaths.Processes, MockApi.getProcesses());
 
       this.get(`${prefix}/sites/:id/hosts`, (_, { params: { id } }) => ({
         results: hosts.results.filter(({ parent }: HostResponse) => parent === id)
@@ -193,8 +222,6 @@ export function loadMockServer() {
       this.get(`${prefix}/processgrouppairs/:id`, (_, { params: { id } }) => ({
         results: processGroupPairs.results.find(({ identity }: ProcessPairsResponse) => identity === id)
       }));
-
-      this.get(`${prefix}/processes`, () => processes);
 
       this.get(`${prefix}/processes/:id`, (_, { params: { id } }) => ({
         results: processes.results.find(({ identity }: ProcessResponse) => identity === id)

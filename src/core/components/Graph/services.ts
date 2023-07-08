@@ -1,9 +1,4 @@
-import { INode, NodeConfig } from '@antv/g6';
-
 import {
-  GraphCombo,
-  GraphEdge,
-  GraphNode,
   LocalStorageData,
   LocalStorageDataSaved,
   LocalStorageDataSavedPayload,
@@ -46,45 +41,6 @@ export const GraphController = {
       .filter((x) => x.endsWith(suffix))
       .forEach((x) => localStorage.removeItem(x));
   },
-  // TODO: remove this function when Backend sanitize the old process pairs
-  sanitizeEdges: (nodes: GraphNode[], edges: GraphEdge[]) => {
-    const availableNodesMap = nodes.reduce((acc, node) => {
-      acc[node.id] = node.id;
-
-      return acc;
-    }, {} as Record<string, string>);
-
-    return edges.filter(({ source, target }) => availableNodesMap[source] && availableNodesMap[target]);
-  },
-
-  fromNodesToLocalStorageData(nodes: INode[], setLocalStorageData: Function) {
-    return nodes
-      .map((node) => {
-        const { id, x, y } = node.getModel() as NodeConfig;
-
-        if (id && x !== undefined && y !== undefined) {
-          return setLocalStorageData({ id, x, y });
-        }
-
-        return undefined;
-      })
-      .filter(Boolean) as LocalStorageData[];
-  },
-
-  getG6Model: ({ nodes, edges, combos }: { nodes: GraphNode[]; edges: GraphEdge[]; combos?: GraphCombo[] }) => ({
-    nodes: JSON.parse(
-      JSON.stringify(
-        nodes.map((node) => ({
-          ...node,
-          cluster: node.comboId, // activate the cluster mode for processes inside a site
-          fx: node.x, // fix position saved in the local storage
-          fy: node.y
-        }))
-      )
-    ),
-    edges: JSON.parse(JSON.stringify(GraphController.sanitizeEdges(nodes, edges))),
-    combos: combos ? JSON.parse(JSON.stringify(combos)) : undefined
-  }),
 
   calculateMaxIteration(nodeCount: number) {
     if (nodeCount > 900) {

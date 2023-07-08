@@ -1,0 +1,12 @@
+.topology_node-default {
+  fill-opacity: 1;
+}
+
+.topology_node-default .pf-topology__node__background {
+  fill: #c9e0f6;
+}
+
+.pf-topology__group .pf-topology__group__background {
+  fill: #f0f3f7;
+  stroke-width: 1px;
+}

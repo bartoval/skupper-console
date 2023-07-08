@@ -12,7 +12,9 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import { ListIcon } from '@patternfly/react-icons';
+import { NodeModel, EdgeModel, EdgeStyle } from '@patternfly/react-topology';
 import { useQuery } from '@tanstack/react-query';
+import { Point } from 'framer-motion';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { PrometheusApi } from '@API/Prometheus.api';
@@ -21,26 +23,23 @@ import { ProcessResponse } from '@API/REST.interfaces';
 import { isPrometheusActive, UPDATE_INTERVAL } from '@config/config';
 import EmptyData from '@core/components/EmptyData';
 import { EDGE_COLOR_DEFAULT, NODE_COLOR_DEFAULT_LABEL } from '@core/components/Graph/Graph.constants';
-import { GraphEdge, GraphCombo, GraphNode } from '@core/components/Graph/Graph.interfaces';
-import GraphReactAdaptor from '@core/components/Graph/GraphReactAdaptor';
+import TopologyAdaptor from '@core/components/Graph/TopologyAdaptor';
 import { QueriesAddresses } from '@pages/Addresses/services/services.enum';
 import { ProcessesRoutesPaths } from '@pages/Processes/Processes.enum';
 import { QueriesProcesses } from '@pages/Processes/services/services.enum';
 import LoadingPage from '@pages/shared/Loading';
-import { QueriesSites } from '@pages/Sites/services/services.enum';
 import { SitesRoutesPaths } from '@pages/Sites/Sites.enum';
 
 import { TopologyController } from '../services';
 import { QueriesTopology } from '../services/services.enum';
-import { ProcessLegendData } from '../Topology.constant';
 import { Labels } from '../Topology.enum';
 
 const ZOOM_CACHE_KEY = 'process-graphZoom';
+const POSITIONS_CACHE_KEY = 'process-graphPositions';
 const SHOW_SITE_KEY = 'showSite';
 const SHOW_LINK_LABEL = 'show-link-label';
 const SHOW_LINK_REVERSE_LABEL = 'show-reverse-link-label';
 const ROTATE_LINK_LABEL = 'show-link-label-rotated';
-const FIT_SCREEN_CACHE_KEY = 'process-fitScreen';
 
 const externalProcessesQueryParams = {
   processRole: 'external'
@@ -62,9 +61,9 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
   const showLinkLabelReverseInitState = localStorage.getItem(SHOW_LINK_REVERSE_LABEL);
   const showRotateLabel = localStorage.getItem(ROTATE_LINK_LABEL);
 
-  const [nodes, setNodes] = useState<GraphNode[]>([]);
-  const [links, setLinks] = useState<GraphEdge[]>([]);
-  const [groups, setGroups] = useState<GraphCombo[]>();
+  const [nodes, setNodes] = useState<NodeModel[]>([]);
+  const [links, setLinks] = useState<EdgeModel[]>([]);
+  const [groups, setGroups] = useState<NodeModel[]>([]);
   const [isAddressSelectMenuOpen, setIsAddressSelectMenuOpen] = useState<boolean>(false);
   const [addressIdSelected, setAddressId] = useState<string | undefined>(addressId || undefined);
   const [showSite, setShowSite] = useState<boolean>(showSiteInitState ? showSiteInitState === 'true' : true);
@@ -83,10 +82,6 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
       refetchInterval: UPDATE_INTERVAL
     }
   );
-
-  const { data: sites, isLoading: isLoadingSites } = useQuery([QueriesSites.GetSites], () => RESTApi.fetchSites(), {
-    refetchInterval: UPDATE_INTERVAL
-  });
 
   const { data: externalProcesses, isLoading: isLoadingExternalProcesses } = useQuery(
     [QueriesProcesses.GetProcessResult, externalProcessesQueryParams],
@@ -140,21 +135,21 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
   );
 
   const handleGetSelectedGroup = useCallback(
-    ({ id, label }: GraphCombo) => {
+    ({ id, label }: EdgeModel) => {
       navigate(`${SitesRoutesPaths.Sites}/${label}@${id}`);
     },
     [navigate]
   );
 
   const handleGetSelectedNode = useCallback(
-    ({ id, label }: GraphNode) => {
+    ({ id, label }: NodeModel) => {
       navigate(`${ProcessesRoutesPaths.Processes}/${label}@${id}`);
     },
     [navigate]
   );
 
   const handleGetSelectedEdge = useCallback(
-    ({ id: linkId, source }: GraphEdge) => {
+    ({ id: linkId, source }: EdgeModel) => {
       if (externalProcesses && remoteProcesses) {
         const processes = [...externalProcesses, ...remoteProcesses];
 
@@ -215,12 +210,9 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
     localStorage.setItem(ROTATE_LINK_LABEL, `${checked}`);
   }
 
-  const handleSaveZoom = useCallback((zoomValue: number) => {
+  const handleSaveZoom = useCallback((zoomValue: number, positions: Point) => {
     localStorage.setItem(ZOOM_CACHE_KEY, `${zoomValue}`);
-  }, []);
-
-  const handleFitScreen = useCallback((flag: boolean) => {
-    localStorage.setItem(FIT_SCREEN_CACHE_KEY, `${flag}`);
+    localStorage.setItem(POSITIONS_CACHE_KEY, JSON.stringify(positions));
   }, []);
 
   const getOptions = useCallback(() => {
@@ -242,16 +234,14 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
   // This effect is triggered when no address is currently selected
   useEffect(() => {
     if (
-      sites &&
       externalProcesses &&
       remoteProcesses &&
       ((showLinkLabel && byteRateByProcessPairs && latencyByProcessPairs) || !showLinkLabel || !isPrometheusActive)
     ) {
       const processes = [...externalProcesses, ...remoteProcesses];
       // Get nodes from site and process groups
-      const siteNodes = TopologyController.convertSitesToNodes(sites);
-      const processesNodes = TopologyController.convertProcessesToNodes(processes, siteNodes);
-      const siteGroups = TopologyController.convertSitesToGroups(processesNodes, siteNodes);
+      const processesNodes = TopologyController.convertProcessesToNodes(processes);
+      const siteGroups = TopologyController.convertSitesToGroups(processes);
 
       // Check if no address is selected
       if (processesPairs && !addressIdSelected) {
@@ -277,7 +267,6 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
       }
     }
   }, [
-    sites,
     externalProcesses,
     processesPairs,
     addressIdSelected,
@@ -293,7 +282,6 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
   // This effect is triggered when one address is currently selected
   useEffect(() => {
     if (
-      sites &&
       externalProcesses &&
       remoteProcesses &&
       ((showLinkLabel && byteRateByProcessPairs && latencyByProcessPairs) || !showLinkLabel || !isPrometheusActive)
@@ -331,9 +319,8 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
 
         const filteredProcesses = processes.filter((node) => processIdsFromAddress.includes(node.identity));
 
-        const siteNodes = TopologyController.convertSitesToNodes(sites);
-        const processesNodes = TopologyController.convertProcessesToNodes(filteredProcesses, siteNodes);
-        const siteGroups = TopologyController.convertSitesToGroups(processesNodes, siteNodes);
+        const processesNodes = TopologyController.convertProcessesToNodes(filteredProcesses);
+        const siteGroups = TopologyController.convertSitesToGroups(filteredProcesses);
 
         // Set the nodes, links and groups for the topology
         setNodes(processesNodes);
@@ -342,7 +329,6 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
       }
     }
   }, [
-    sites,
     externalProcesses,
     processesPairs,
     addressIdSelected,
@@ -357,7 +343,6 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
   ]);
 
   if (
-    isLoadingSites ||
     isLoadingRemoteProcesses ||
     isLoadingExternalProcesses ||
     isLoadingRemoteProcesses ||
@@ -366,6 +351,14 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
   ) {
     return <LoadingPage />;
   }
+
+  const linksAdapted: EdgeModel[] = links.map((edge) => ({
+    id: edge.id,
+    source: edge.source,
+    target: edge.target,
+    edgeStyle: EdgeStyle.solid,
+    type: 'edge'
+  }));
 
   return (
     <>
@@ -435,21 +428,17 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
 
       {!nodes.length && <EmptyData />}
       {!!nodes.length && (
-        <GraphReactAdaptor
-          nodes={nodes}
-          edges={links}
-          combos={groups}
+        <TopologyAdaptor
+          nodes={[...nodes, ...groups]}
+          edges={linksAdapted}
           onClickCombo={handleGetSelectedGroup}
           onClickNode={handleGetSelectedNode}
           onClickEdge={handleGetSelectedEdge}
           itemSelected={processId}
-          legendData={ProcessLegendData}
           onGetZoom={handleSaveZoom}
-          onFitScreen={handleFitScreen}
-          layout={TopologyController.selectLayoutFromNodes(nodes, 'combo')}
           config={{
             zoom: localStorage.getItem(ZOOM_CACHE_KEY),
-            fitScreen: Number(localStorage.getItem(FIT_SCREEN_CACHE_KEY))
+            positions: localStorage.getItem(POSITIONS_CACHE_KEY)
           }}
         />
       )}

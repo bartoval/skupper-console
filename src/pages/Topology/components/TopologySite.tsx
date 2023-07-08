@@ -2,13 +2,13 @@ import { FC, useCallback } from 'react';
 
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem, Tooltip } from '@patternfly/react-core';
 import { ListIcon } from '@patternfly/react-icons';
+import { NodeModel, Point } from '@patternfly/react-topology';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { RESTApi } from '@API/REST.api';
 import { UPDATE_INTERVAL } from '@config/config';
-import { GraphNode } from '@core/components/Graph/Graph.interfaces';
-import GraphReactAdaptor from '@core/components/Graph/GraphReactAdaptor';
+import TopologyAdaptor from '@core/components/Graph/TopologyAdaptor';
 import LoadingPage from '@pages/shared/Loading';
 import { QueriesSites } from '@pages/Sites/services/services.enum';
 import { SitesRoutesPaths } from '@pages/Sites/Sites.enum';
@@ -17,7 +17,7 @@ import { TopologyController } from '../services';
 import { Labels } from '../Topology.enum';
 
 const ZOOM_CACHE_KEY = 'site-graphZoom';
-const FIT_SCREEN_CACHE_KEY = 'site-fitScreen';
+const POSITIONS_CACHE_KEY = 'site-graphPositions';
 
 const TopologySite: FC<{ id?: string | null }> = function () {
   const navigate = useNavigate();
@@ -38,16 +38,13 @@ const TopologySite: FC<{ id?: string | null }> = function () {
     refetchInterval: UPDATE_INTERVAL
   });
 
-  const handleSaveZoom = useCallback((zoomValue: number) => {
+  const handleSaveZoom = useCallback((zoomValue: number, positions: Point) => {
     localStorage.setItem(ZOOM_CACHE_KEY, `${zoomValue}`);
-  }, []);
-
-  const handleFitScreen = useCallback((flag: boolean) => {
-    localStorage.setItem(FIT_SCREEN_CACHE_KEY, `${flag}`);
+    localStorage.setItem(POSITIONS_CACHE_KEY, JSON.stringify(positions));
   }, []);
 
   const handleGetSelectedNode = useCallback(
-    ({ id, label }: GraphNode) => {
+    ({ id, label }: NodeModel) => {
       navigate(`${SitesRoutesPaths.Sites}/${label}@${id}`);
     },
     [navigate]
@@ -79,16 +76,13 @@ const TopologySite: FC<{ id?: string | null }> = function () {
           </ToolbarGroup>
         </ToolbarContent>
       </Toolbar>
-      <GraphReactAdaptor
+      <TopologyAdaptor
         nodes={nodes}
         edges={siteLinks}
         onClickNode={handleGetSelectedNode}
         onGetZoom={handleSaveZoom}
-        onFitScreen={handleFitScreen}
-        layout={TopologyController.selectLayoutFromNodes(nodes)}
         config={{
-          zoom: localStorage.getItem(ZOOM_CACHE_KEY),
-          fitScreen: Number(localStorage.getItem(FIT_SCREEN_CACHE_KEY))
+          zoom: localStorage.getItem(ZOOM_CACHE_KEY)
         }}
       />
     </>
