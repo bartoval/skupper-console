@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@antv/g6": "^4.8.17",
-    "@patternfly/patternfly": "^4.224.2",
+    "@patternfly/patternfly": "^4.224.5",
     "@patternfly/react-charts": "^6.94.19",
     "@patternfly/react-core": "^4.276.8",
     "@patternfly/react-icons": "^4.93.6",
