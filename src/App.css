@@ -73,9 +73,6 @@ html {
   text-shadow: 1px 0 1px currentColor;
 }
 
-.pf-topology-content {
-  background-color: white !important;
-}
 /* Layout */
 #app {
   height: 100%;

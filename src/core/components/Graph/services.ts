@@ -1,3 +1,5 @@
+import { Node, Visualization, EdgeStyle, EdgeAnimationSpeed } from '@patternfly/react-topology';
+
 import {
   LocalStorageData,
   LocalStorageDataSaved,
@@ -42,31 +44,85 @@ export const GraphController = {
       .forEach((x) => localStorage.removeItem(x));
   },
 
-  calculateMaxIteration(nodeCount: number) {
-    if (nodeCount > 900) {
-      return 10;
+  // An external utility  store the nodes and their respective positions in the local storage.
+  persistNodes(node: Node) {
+    //nodes in the group
+    const children = node.getChildren() as Node[];
+
+    if (children.length) {
+      const nodes = children.flatMap((child: Node) => {
+        const { x, y } = child.getPosition();
+
+        return { id: child.getId(), x, y };
+      });
+      GraphController.saveDataInLocalStorage(nodes);
     }
 
-    if (nodeCount > 750) {
-      return 10;
-    }
+    const { x, y } = node.getPosition();
+    GraphController.saveDataInLocalStorage([{ id: node.getId(), x, y }]);
+  },
 
-    if (nodeCount > 600) {
-      return 15;
-    }
+  // This behavior emulates the current mouseover effect in the current Skupper console.
+  mouseOverNodeBehaviour(controller: Visualization, idSelected: string) {
+    // should be placed in controller.graph this method?
+    const nodeSelected = controller.getNodeById(idSelected);
+    const allNodes = controller.getGraph().getNodes();
 
-    if (nodeCount > 450) {
-      return 20;
-    }
+    const nodesFromSelectedNode = nodeSelected?.getSourceEdges().map((e) => e.getTarget()) || [];
+    const nodesToSelectedNode = nodeSelected?.getTargetEdges().map((e) => e.getSource()) || [];
 
-    if (nodeCount > 300) {
-      return 50;
-    }
+    const neighbors = [...nodesFromSelectedNode, ...nodesToSelectedNode];
+    const neighborsIds = neighbors.map((edge) => edge.getId());
 
-    if (nodeCount > 150) {
-      return 75;
-    }
+    //This is only a simulation if you click on the process frontend-xxxx or recommendation-service-xxx
+    // after 6 seconds we restore the default state of the topology
+    if (
+      idSelected === '99d0b02a-5a1b-47e7-8687-2e6f8c7e8c8b' ||
+      idSelected === '3861f850-687e-4f77-83cc-22074992c555'
+    ) {
+      controller
+        .getGraph()
+        .getEdges()
+        .forEach((edge) => edge.setVisible(false));
 
-    return 100;
+      nodeSelected?.getSourceEdges().map((e) => {
+        e.setVisible(true);
+        e.setEdgeStyle(EdgeStyle.dashedMd);
+        e.setEdgeAnimationSpeed(EdgeAnimationSpeed.fast);
+      });
+      nodeSelected?.getTargetEdges().map((e) => {
+        e.setVisible(true);
+        e.setEdgeStyle(EdgeStyle.dashedMd);
+        e.setEdgeAnimationSpeed(EdgeAnimationSpeed.fast);
+      });
+
+      allNodes.forEach((group) => {
+        (group.getChildren() as Node[]).map((childNode) => {
+          if (![idSelected, ...neighborsIds].includes(childNode.getId())) {
+            // It seems that this function messed up the position
+            // In alternative (better) we can play with opacity but I didn't find a method to modify dynamically stiles or classes
+            childNode.setVisible(false);
+          }
+        });
+      });
+
+      setTimeout(() => {
+        controller
+          .getGraph()
+          .getEdges()
+          .forEach((edge) => edge.setVisible(true));
+
+        nodeSelected?.getSourceEdges().map((e) => e.setEdgeStyle(EdgeStyle.default));
+        nodeSelected?.getTargetEdges().map((e) => e.setEdgeStyle(EdgeStyle.default));
+
+        allNodes.forEach((group) => {
+          (group.getChildren() as Node[]).forEach((childNode) => {
+            if (![idSelected, ...neighborsIds].includes(childNode.getId())) {
+              childNode.setVisible(true);
+            }
+          });
+        });
+      }, 6000);
+    }
   }
 };

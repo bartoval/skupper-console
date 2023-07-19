@@ -1,4 +1,4 @@
-.topology_node-default {
+/* .topology_node-default {
   fill-opacity: 1;
 }
 
@@ -9,4 +9,8 @@
 .pf-topology__group .pf-topology__group__background {
   fill: #f0f3f7;
   stroke-width: 1px;
-}
+} */
+
+/* .pf-topology-content {
+  background-color: white !important;
+} */

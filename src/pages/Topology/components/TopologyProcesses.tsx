@@ -357,7 +357,8 @@ const TopologyProcesses: FC<{ addressId?: string | null; id: string | undefined 
     source: edge.source,
     target: edge.target,
     edgeStyle: EdgeStyle.solid,
-    type: 'edge'
+    type: 'edge',
+    label: edge.label
   }));
 
   return (
