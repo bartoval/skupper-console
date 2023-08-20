@@ -1237,18 +1237,18 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@patternfly/patternfly@^5.0.2":
+"@patternfly/patternfly@5.0.2", "@patternfly/patternfly@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.0.2.tgz#f5daf2c98ccb85e6466d42fd61d39ba3c10ed532"
   integrity sha512-PB8+MLdYVgF1hIOxGmnVsZG+YHUX3RePe5W1oMS4gS00EmSgw1cobr1Qbpy/BqqS8/R9DRN4hZ2FKDT0d5tkFQ==
 
-"@patternfly/react-charts@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-7.0.0.tgz#89107fcd3ff8de9b7d82ebdf4446a060646890b5"
-  integrity sha512-lRR5iXJeTWbEqMlIcqnVA9DHurn8MJNDnwtEDcrzCH5g28MCXGosQjhXqsnz3LVGtHcBsQcpxMIv8WO5rfJHOA==
+"@patternfly/react-charts@^7.1.0":
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-7.1.0.tgz#911e43096f68953e9e91e0fe7fced282dcffdb3d"
+  integrity sha512-ROBRs/MuDHNTSe6pWhPYbNbMdjbNmShCVpYBDGQJMNLb0ojy8dZoiyp9/UoyEPRxZnt3vqAkjPSSCpGxXsjEgg==
   dependencies:
-    "@patternfly/react-styles" "^5.0.0"
-    "@patternfly/react-tokens" "^5.0.0"
+    "@patternfly/react-styles" "^5.1.0"
+    "@patternfly/react-tokens" "^5.1.0"
     hoist-non-react-statics "^3.3.0"
     lodash "^4.17.19"
     tslib "^2.5.0"
@@ -1292,6 +1292,13 @@
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.0.0.tgz#63705ad498ff271fd056e92bd07b2c720ef3491a"
   integrity sha512-xbSCgjx+fPrXbIzUznwTFWtJEbzVS0Wn4zrejdKJYQTY+4YcuPlFkeq2tl3syzwGsaYMpHiFwQiTaKyTvlwtuw==
 
+"@patternfly/react-styles@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.1.0.tgz#1c65fee356accdf7dbdb403aeb5921519cb4bd0c"
+  integrity sha512-RnVS/v1PZuvnXXmPtJamuAprq1lg6tqw6dbeYbm9KmBNXSuB1Iu5fc6kjzrdoSLKBmf6rzpRmafYm2HRwFcrLw==
+  dependencies:
+    "@patternfly/patternfly" "5.0.2"
+
 "@patternfly/react-table@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-5.0.0.tgz#2808f22d01818c31e6ddc69cc3a07c9381dc6d84"
@@ -1308,6 +1315,13 @@
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-5.0.0.tgz#8e2698d32d5353359e713312687a6b08ead0080b"
   integrity sha512-to2CXIZ6WTuzBcjLZ+nXi5LhnYkSIDu3RBMRZwrplmECOoUWv87CC+2T0EVxtASRtpQfikjD2PDKMsif5i0BxQ==
+
+"@patternfly/react-tokens@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-5.1.0.tgz#9387415207b0af2924e80edf52d6b2f6d9e9fb42"
+  integrity sha512-HRBoS3JMbW8vWqz91oW2NGUdLndC40TXvMnEaORNd/I25czOquxnx/HxVh+/bdSkNqByj6+fiTwH2X3fL2Cajg==
+  dependencies:
+    "@patternfly/patternfly" "5.0.2"
 
 "@polka/url@^1.0.0-next.20":
   version "1.0.0-next.21"
