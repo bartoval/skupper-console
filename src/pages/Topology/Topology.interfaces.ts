@@ -6,7 +6,8 @@ export interface Entity {
   id: string;
   comboId?: string;
   label: string;
-  img: string;
+  iconFileName: string;
+  iconProps?: { show: boolean; width: number; height: number };
   nodeConfig?: ModelStyle;
 }
 
@@ -20,4 +21,17 @@ export interface TopologyMetricsMetrics {
   showBytes?: boolean;
   showByteRate?: boolean;
   showLatency?: boolean;
+  params: {
+    fetchBytes: { groupBy: string };
+    fetchByteRate: { groupBy: string };
+    fetchLatency: { groupBy: string };
+  };
+}
+
+export interface DisplaySelectProps {
+  key: string;
+  value: string;
+  label: string;
+  isDisabled?: Function;
+  addSeparator?: boolean;
 }
