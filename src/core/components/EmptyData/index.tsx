@@ -1,13 +1,6 @@
 import { ComponentType, FC } from 'react';
 
-import {
-  Bullseye,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateHeader,
-  EmptyStateIcon,
-  EmptyStateVariant
-} from '@patternfly/react-core';
+import { Bullseye, EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
 
 import { EmptyDataLabels } from './EmptyData.enum';
 
@@ -20,8 +13,7 @@ interface EmptyDataProps {
 const EmptyData: FC<EmptyDataProps> = function ({ message = EmptyDataLabels.Default, description, icon }) {
   return (
     <Bullseye>
-      <EmptyState variant={EmptyStateVariant.sm} isFullHeight>
-        <EmptyStateHeader titleText={message} headingLevel="h2" icon={icon && <EmptyStateIcon icon={icon} />} />
+      <EmptyState headingLevel="h2" titleText={message} variant={EmptyStateVariant.sm} isFullHeight icon={icon}>
         {description && <EmptyStateBody>{description}</EmptyStateBody>}
       </EmptyState>
     </Bullseye>

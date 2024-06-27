@@ -150,7 +150,7 @@ const SkUpdateDataButton: FC<SkUpdateDataButtonProps> = function ({
         key="split-action-primary"
         data-testid="update-data-click"
         onClick={debounce(revalidateLiveQueries, 750)}
-        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, zIndex: 100, left: '-4px' }}
         isLoading={isLoading}
       >
         <SyncIcon />

@@ -23,7 +23,7 @@ function createStatusLabel(label: string) {
 const ResponseCharts: FC<{ responseRateData: ResponseMetrics | null; responseData: ResponseMetrics }> = memo(
   ({ responseRateData, responseData }) => (
     <>
-      <Grid hasGutter className="pf-v5-u-m-md">
+      <Grid hasGutter className="pf-v6-u-m-md">
         {/* HTTP stats */}
         <GridItem span={3}>
           <SkCounterCard
@@ -58,7 +58,7 @@ const ResponseCharts: FC<{ responseRateData: ResponseMetrics | null; responseDat
       <Flex
         alignItems={{ default: 'alignItemsStretch', md: 'alignItemsStretch' }}
         direction={{ md: 'column', xl: 'row' }}
-        className="pf-v5-u-mt-2xl "
+        className="pf-v6-u-mt-2xl "
       >
         <FlexItem flex={{ default: 'flex_1' }}>
           <SkChartArea
@@ -82,7 +82,7 @@ const ResponseCharts: FC<{ responseRateData: ResponseMetrics | null; responseDat
             ]}
             data={[responseRateData?.statusCode5xx.data || [{ x: 0, y: 0 }]]}
             padding={errorRateChartPadding}
-            themeColor={ChartThemeColor.gold}
+            themeColor={ChartThemeColor.orange}
           />
         </FlexItem>
 

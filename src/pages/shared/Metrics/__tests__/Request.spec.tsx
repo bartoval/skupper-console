@@ -53,7 +53,7 @@ describe('Request component', () => {
 
     expect(screen.getByText(MetricsLabels.RequestsTitle)).toBeInTheDocument();
 
-    fireEvent.click(document.querySelector('.pf-v5-c-card__header-toggle')?.querySelector('button')!);
+    fireEvent.click(document.querySelector('.pf-v6-c-card__header-toggle')?.querySelector('button')!);
     expect(handleGetisSectionExpanded).toHaveBeenCalledTimes(1);
   });
 

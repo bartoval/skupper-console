@@ -6,7 +6,6 @@ import {
   List,
   ListItem,
   PageSection,
-  PageSectionVariants,
   Text,
   TextContent,
   TextVariants,
@@ -21,7 +20,7 @@ const ErrorHttp: FC<{ code?: string; message?: string; onReset?: MouseEventHandl
   onReset
 }) {
   return (
-    <PageSection variant={PageSectionVariants.light}>
+    <PageSection>
       <TextContent>
         <Title headingLevel="h1">{message || HttpErrorLabels.ErrorTitle}</Title>
         <Title headingLevel="h2">{code || ''}</Title>

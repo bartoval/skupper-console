@@ -20,11 +20,11 @@ enum Labels {
 const ProcessLegend = function () {
   return (
     <>
-      <Title headingLevel="h3" className="pf-v5-u-my-sm ">
+      <Title headingLevel="h3" className="pf-v6-u-my-md">
         {Labels.EntitiesTitle}
       </Title>
 
-      <Flex className="pf-v5-u-mb-md pf-v5-u-mx-md">
+      <Flex className="pf-v6-u-mb-md pf-v6-u-mx-md">
         <Flex direction={{ default: 'column' }} alignItems={{ default: 'alignItemsCenter' }}>
           <FlexItem>
             <SvgCircle />
@@ -52,11 +52,11 @@ const ProcessLegend = function () {
       </Flex>
 
       <Divider />
-      <Title headingLevel="h3" className="pf-v5-u-my-sm ">
+      <Title headingLevel="h3" className="pf-v6-u-my-sm">
         {Labels.LinksTitle}
       </Title>
 
-      <Flex className="pf-v5-u-mb-md pf-v5-u-mx-md">
+      <Flex className="pf-v6-u-mb-md pf-v6-u-mx-md">
         <Flex direction={{ default: 'column' }} alignItems={{ default: 'alignItemsCenter' }}>
           <FlexItem>
             <SvgHorizontalLine />

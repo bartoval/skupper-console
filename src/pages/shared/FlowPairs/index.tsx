@@ -1,6 +1,6 @@
 import { FC, useCallback, useState } from 'react';
 
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Modal, ModalBody, ModalVariant } from '@patternfly/react-core';
 
 import { FlowPairsResponse } from '@API/REST.interfaces';
 import { LinkCellProps } from '@core/components/LinkCell/LinkCell.interfaces';
@@ -35,7 +35,7 @@ const FlowPairs: FC<SKTableProps<FlowPairsResponse>> = function ({ ...props }) {
         onClose={() => handleOnClickDetails(undefined)}
         variant={ModalVariant.medium}
       >
-        {flowPairSelected ? <FlowPair flowPair={flowPairSelected} /> : null}
+        <ModalBody>{flowPairSelected ? <FlowPair flowPair={flowPairSelected} /> : null}</ModalBody>
       </Modal>
     </>
   );

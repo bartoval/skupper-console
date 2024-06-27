@@ -48,14 +48,25 @@ const SkHeader = function () {
 
       <MastheadMain>
         <MastheadBrand>
-          <Brand src={brandLogo} alt="logo" heights={{ default: '45px' }} />
+          <Brand src={brandLogo} alt="logo" heights={{ default: '45px' }} style={{ zIndex: 1 }} />
+          <div
+            style={{
+              height: '55px',
+              backgroundColor: 'var(--pf-t--color--gray--70)',
+              width: '100%',
+              top: '-5px',
+              left: '-5px',
+              borderRadius: '50px',
+              position: 'absolute'
+            }}
+          />
         </MastheadBrand>
       </MastheadMain>
 
       <MastheadContent>
         <Toolbar isFullHeight>
           <ToolbarContent>
-            <ToolbarGroup align={{ default: 'alignRight' }} spacer={{ default: 'spacerMd' }}>
+            <ToolbarGroup align={{ default: 'alignEnd' }} gap={{ default: 'gapMd' }}>
               <ToolbarItem>
                 <DarkModeSwitch />
               </ToolbarItem>

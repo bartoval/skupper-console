@@ -1,7 +1,6 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, Ref, useCallback, useState } from 'react';
 
-import { Divider, SelectGroup } from '@patternfly/react-core';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/deprecated';
+import { Divider, MenuToggle, MenuToggleElement, Select, SelectGroup, SelectOption } from '@patternfly/react-core';
 
 import { SHOW_DATA_LINKS, SHOW_ROUTER_LINKS } from '../Topology.constants';
 import { TopologyLabels } from '../Topology.enum';
@@ -57,26 +56,34 @@ const DisplayOptions: FC<DisplayOptionsProps> = function ({
     onSelected
   });
 
-  function toggleDisplayMenu(openDisplayMenu: boolean) {
-    setIsDisplayMenuOpen(openDisplayMenu);
+  function toggleDisplayMenu() {
+    setIsDisplayMenuOpen(!isDisplayMenuOpen);
   }
+
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={toggleDisplayMenu} isExpanded={isDisplayMenuOpen}>
+      {TopologyLabels.DisplayPlaceholderText}
+    </MenuToggle>
+  );
 
   return (
     <Select
-      variant={SelectVariant.checkbox}
       isOpen={isDisplayMenuOpen}
-      onSelect={(_, selection) => selectDisplayOptions(selection.toString())}
-      onToggle={(_, isOpen) => toggleDisplayMenu(isOpen)}
-      selections={displayOptionsSelected}
-      placeholderText={TopologyLabels.DisplayPlaceholderText}
-      isCheckboxSelectionBadgeHidden
-      isGrouped
+      onSelect={(_, selection) => selectDisplayOptions(selection!.toString())}
+      selected={displayOptionsSelected}
+      toggle={toggle}
     >
       {options.map((group, index) => (
         <SelectGroup key={index}>
           {<Divider />}
           {group.map(({ key, value, label }) => (
-            <SelectOption key={key} value={value} isDisabled={optionsDisabled[value]}>
+            <SelectOption
+              key={key}
+              value={value}
+              isDisabled={optionsDisabled[value]}
+              hasCheckbox
+              isSelected={displayOptionsSelected.includes(value)}
+            >
               {label}
             </SelectOption>
           ))}
