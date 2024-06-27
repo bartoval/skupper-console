@@ -10,3 +10,7 @@ html {
 .sk-capitalize {
   text-transform: capitalize;
 }
+
+.pf-v6-c-page__main {
+  flex: 1;
+}

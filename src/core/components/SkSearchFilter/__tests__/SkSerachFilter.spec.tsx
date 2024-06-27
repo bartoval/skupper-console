@@ -78,12 +78,12 @@ describe('SkSearchFilter', () => {
   });
 
   it('should change the filter type selection', async () => {
-    const { getByTestId, getByRole } = render(<SkSearchFilter onSearch={onSearchMock} selectOptions={selectOptions} />);
+    const { getByTestId } = render(<SkSearchFilter onSearch={onSearchMock} selectOptions={selectOptions} />);
     const searchInput = getByTestId(testIds.searchBox).querySelector('input') as HTMLInputElement;
 
     await eventUser.type(searchInput, 'test');
 
-    const filterLabelBtn = getByRole('group').querySelector('button') as HTMLButtonElement;
+    const filterLabelBtn = getByTestId('sk-search-box').querySelector('button') as HTMLButtonElement;
 
     await eventUser.click(filterLabelBtn);
     expect(filterLabelBtn).not.toBeInTheDocument();

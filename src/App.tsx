@@ -12,6 +12,7 @@ import LoadingPage from '@pages/shared/Loading';
 import { routes } from 'routes';
 
 import '@patternfly/react-core/dist/styles/base.css';
+
 import './App.css';
 
 const App = function () {
@@ -19,7 +20,7 @@ const App = function () {
 
   return (
     <Page
-      header={<SkHeader />}
+      masthead={<SkHeader />}
       sidebar={<SkSidebar />}
       breadcrumb={
         <Toolbar style={{ padding: 0 }}>

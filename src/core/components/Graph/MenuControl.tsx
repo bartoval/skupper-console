@@ -59,7 +59,7 @@ const MenuControl = function ({ graphInstance }: ZoomControlsProps) {
   return (
     <Toolbar className="sk-topology-controls">
       <ToolbarContent>
-        <ToolbarGroup spaceItems={{ default: 'spaceItemsNone' }}>
+        <ToolbarGroup gap={{ default: 'gapNone' }}>
           <ToolbarItem>
             <Tooltip content={'zoom in'}>
               <Button

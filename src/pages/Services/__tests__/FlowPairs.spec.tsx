@@ -75,7 +75,7 @@ describe('Begin testing the FlowPairs component', () => {
     fireEvent.click(screen.getByText(ServicesLabels.Servers));
 
     expect(screen.getByText(`${ServicesLabels.Servers}`).parentNode?.parentNode).toHaveClass(
-      'pf-v5-c-tabs__item pf-m-current'
+      'pf-v6-c-tabs__item pf-m-current'
     );
   });
 });

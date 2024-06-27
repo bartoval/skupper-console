@@ -6,19 +6,21 @@
 }
 
 .sk-topology-control-bar__button {
-  margin-right: var(--pf-v5-global--spacer--xs);
-  margin-top: var(--pf-v5-global--spacer--xs);
+  margin-right: var(--pf-v6-global--spacer--xs);
+  margin-top: var(--pf-v6-global--spacer--xs);
   border: none;
-  border-radius: var(--pf-v5-global--BorderRadius--sm);
-  box-shadow: var(--pf-v5-global--BoxShadow--sm);
+  border-radius: var(--pf-t--global--border--radius--small);
+  box-shadow: var(--pf-t--global--box-shadow--sm);
 }
-.sk-topology-control-bar__button:not(.pf-v5-m-disabled) {
-  background-color: var(--pf-v5-global--BackgroundColor--100);
+.sk-topology-control-bar__button:not(.pf-v6-m-disabled) {
+  background-color: var(--pf-t--color--white);
 }
+
 .sk-topology-control-bar__button:after {
   display: none;
 }
+
 .sk-topology-control-bar__button:hover {
   border: none;
-  box-shadow: var(--pf-v5-global--BoxShadow--md);
+  box-shadow: var(--pf-t--global--box-shadow--md);
 }

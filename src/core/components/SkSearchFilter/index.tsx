@@ -1,6 +1,8 @@
 import { useState, MouseEvent as ReactMouseEvent, Ref, FC, FormEvent, useEffect, memo } from 'react';
 
 import {
+  Label,
+  LabelGroup,
   Toolbar,
   ToolbarItem,
   ToolbarContent,
@@ -12,8 +14,6 @@ import {
   Select,
   SelectList,
   SelectOption,
-  ChipGroup,
-  Chip,
   ToolbarFilter,
   Button
 } from '@patternfly/react-core';
@@ -119,7 +119,7 @@ const SkSearchFilter: FC<SkSearchFilterProps> = memo(({ text = '', onSearch, sel
               </Select>
             </ToolbarItem>
 
-            <ToolbarItem variant="search-filter">
+            <ToolbarItem>
               <SearchInput
                 data-testid="sk-search-box"
                 className="sk-search-filter"
@@ -151,16 +151,18 @@ export default SkSearchFilter;
 const ActiveFilter: FC<ActiveFilterProps> = function ({ id, name, searchValue, onDelete }) {
   return (
     <ToolbarFilter key={`${id}${name}${searchValue}`} categoryName={name}>
-      <ChipGroup categoryName={name}>
-        <Chip onClick={onDelete}>{searchValue}</Chip>
-      </ChipGroup>
+      <LabelGroup categoryName={name}>
+        <Label variant="outline" onClose={onDelete}>
+          {searchValue}
+        </Label>
+      </LabelGroup>
     </ToolbarFilter>
   );
 };
 
 const ActiveFilters: FC<ActiveFiltersProps> = function ({ filterSelected, onDeleteFilter, onDeleteAll }) {
   return (
-    <ToolbarGroup spaceItems={{ default: 'spaceItemsSm' }}>
+    <ToolbarGroup>
       <ToolbarItem data-testid="sk-group-filter-labels">
         {filterSelected.map((filter) => (
           <ActiveFilter

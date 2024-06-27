@@ -5,7 +5,6 @@ import {
   ClipboardCopyVariant,
   Divider,
   PageSection,
-  PageSectionVariants,
   Text,
   TextContent,
   TextVariants,
@@ -35,7 +34,7 @@ const ErrorConsole: FC<ErrorConsoleProps> = function ({ error, resetErrorBoundar
 
   // It handles app errors
   return (
-    <PageSection variant={PageSectionVariants.light} data-testid="sk-js-error-view">
+    <PageSection data-testid="sk-js-error-view">
       <TextContent>
         <Title headingLevel="h1">{ConsoleErrorLabels.ErrorTitle}</Title>
         <Text component={TextVariants.h3}>{message}</Text>

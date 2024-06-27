@@ -143,7 +143,7 @@ const SkTable = function <T>({
   const { shouldSort = true, isFullHeight = false, ...restProps } = props;
 
   return (
-    <Card isFullHeight={isFullHeight}>
+    <Card isFullHeight={isFullHeight} isPlain>
       {title && (
         <CardHeader>
           <TextContent>
@@ -200,7 +200,10 @@ const SkTable = function <T>({
                 skRows.map((row) => (
                   <Tr key={row.id}>
                     {row.columns.map(
-                      ({ data, value, customCellName, callback, format, width, modifier, isStickyColumn }, index) => {
+                      (
+                        { data, value, customCellName, callback, format, width, modifier = 'nowrap', isStickyColumn },
+                        index
+                      ) => {
                         const Component = !!customCells && !!customCellName && customCells[customCellName];
 
                         return (

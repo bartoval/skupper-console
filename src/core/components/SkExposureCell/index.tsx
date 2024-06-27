@@ -7,7 +7,7 @@ const SkExposureCell = function ({ value }: { value: 'bound' | 'unbound' }) {
     return <Label color="blue">{ProcessesLabels.IsExposed}</Label>;
   }
 
-  return <Label color="gold">{ProcessesLabels.IsNotExposed}</Label>;
+  return <Label color="orange">{ProcessesLabels.IsNotExposed}</Label>;
 };
 
 export default SkExposureCell;

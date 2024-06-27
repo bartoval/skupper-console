@@ -15,15 +15,6 @@ describe('Metrics component', () => {
   beforeEach(() => {
     server = loadMockServer() as Server;
     server.logging = false;
-  });
-
-  afterEach(() => {
-    server.shutdown();
-    jest.clearAllMocks();
-  });
-
-  it('should render the Metric Filter', async () => {
-    const onRefetch = jest.fn();
 
     render(
       <MetricFilters
@@ -50,7 +41,16 @@ describe('Metrics component', () => {
         onSelectFilters={() => {}}
       />
     );
+  });
 
+  afterEach(() => {
+    server.shutdown();
+    jest.clearAllMocks();
+  });
+
+  const onRefetch = jest.fn();
+
+  it('should render the Metric Filter', async () => {
     fireEvent.click(screen.getByText(MetricsLabels.FilterAllSourceProcesses));
     await waitFor(() => expect(screen.getByText(processesData.results[0].name)).toBeInTheDocument(), {
       timeout: waitForElementToBeRemovedTimeout
@@ -86,35 +86,7 @@ describe('Metrics component', () => {
     });
   });
 
-  it('should render the Metric Filter 2', async () => {
-    const onRefetch = jest.fn();
-
-    render(
-      <MetricFilters
-        sourceSites={[{ destinationName: siteData.results[0].name }, { destinationName: siteData.results[1].name }]}
-        destSites={[{ destinationName: siteData.results[2].name }, { destinationName: siteData.results[3].name }]}
-        sourceProcesses={[
-          { destinationName: processesData.results[0].name },
-          { destinationName: processesData.results[1].name }
-        ]}
-        destProcesses={[
-          { destinationName: processesData.results[2].name },
-          { destinationName: processesData.results[3].name }
-        ]}
-        availableProtocols={[AvailableProtocols.Http, AvailableProtocols.Http2, AvailableProtocols.Tcp]}
-        configFilters={{
-          destinationProcesses: { disabled: false, placeholder: MetricsLabels.FilterAllDestinationProcesses },
-          sourceProcesses: { disabled: false, placeholder: MetricsLabels.FilterAllSourceProcesses },
-          protocols: { disabled: false, placeholder: MetricsLabels.FilterProtocolsDefault }
-        }}
-        defaultMetricFilterValues={{ sourceProcess: undefined }}
-        startTimeLimit={0}
-        isRefetching={false}
-        onRefetch={onRefetch}
-        onSelectFilters={() => {}}
-      />
-    );
-
+  it('should render the Metric Filter-2', async () => {
     fireEvent.click(screen.getByText(MetricsLabels.FilterAllDestinationSites));
     await waitFor(() => expect(screen.getByText(siteData.results[3].name)).toBeInTheDocument(), {
       timeout: waitForElementToBeRemovedTimeout

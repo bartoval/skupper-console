@@ -1,13 +1,10 @@
 import { FC, ReactElement, Suspense } from 'react';
 
 import {
-  Divider,
   Flex,
   FlexItem,
   PageGroup,
-  PageNavigation,
   PageSection,
-  PageSectionVariants,
   Text,
   TextContent,
   TextVariants,
@@ -55,7 +52,7 @@ const MainContainer: FC<MainContainerProps> = function ({
     <TransitionPage>
       <PageGroup data-testid={dataTestId}>
         {title && (
-          <PageSection role="sk-heading" variant={PageSectionVariants.light}>
+          <PageSection role="sk-heading">
             <Flex
               justifyContent={{ default: 'justifyContentSpaceBetween' }}
               alignItems={{ default: 'alignItemsFlexStart' }}
@@ -85,16 +82,9 @@ const MainContainer: FC<MainContainerProps> = function ({
           </PageSection>
         )}
 
-        {navigationComponent && (
-          <>
-            <PageNavigation className="pf-v5-u-py-0 pf-v5-u-px-xl">
-              <Flex>{navigationComponent}</Flex>
-            </PageNavigation>
-            <Divider />
-          </>
-        )}
+        {navigationComponent && <PageSection>{navigationComponent}</PageSection>}
         {mainContentChildren && (
-          <PageSection padding={{ default: hasMainContentPadding ? 'noPadding' : 'padding' }} isFilled={true}>
+          <PageSection padding={{ default: hasMainContentPadding ? 'noPadding' : 'padding' }} isFilled>
             <Suspense fallback={<LoadingPage />}>{mainContentChildren} </Suspense>
           </PageSection>
         )}

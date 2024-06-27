@@ -148,7 +148,7 @@ const ProcessPairsFlows: FC<ProcessPairsFlowsProps> = function ({ processPairId,
       )}
 
       {((protocol === AvailableProtocols.Tcp && !!activeConnectionsCount) || !!oldConnectionsCount) && (
-        <Tabs activeKey={activeTab} onSelect={handleTabClick} component="nav" isBox>
+        <Tabs activeKey={activeTab} onSelect={handleTabClick} component="nav">
           <Tab
             eventKey={TAB_1_KEY}
             title={<TabTitleText>{`${ProcessesLabels.ActiveConnections} (${activeConnectionsCount})`}</TabTitleText>}

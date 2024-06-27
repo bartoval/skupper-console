@@ -21,7 +21,7 @@ const SkCounterCard: FC<MetricCardProps> = function ({
     >
       <CardBody>
         <Flex alignItems={{ default: 'alignItemsCenter' }} justifyContent={{ default: 'justifyContentCenter' }}>
-          <TextContent style={{ color: `var(${fontColor})` }} className="pf-v5-u-text-align-center">
+          <TextContent style={{ color: `var(${fontColor})` }} className="pf-v6-u-text-align-center">
             <Text component={TextVariants.p} style={{ margin: 0 }}>
               {title}
             </Text>
