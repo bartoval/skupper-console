@@ -1,6 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 
 import { DEFAULT_ROUTE } from '@config/routes';
+import { dashboardRoutes } from '@pages/Dashboard/routes';
 import { processesRoutes } from '@pages/Processes/routes';
 import { processGroupsRoutes } from '@pages/ProcessGroups/routes';
 import { servicesRoutes } from '@pages/Services/routes';
@@ -15,5 +16,6 @@ export const routes: RouteObject[] = [
   ...processGroupsRoutes,
   ...processesRoutes,
   ...errorsRoutes,
-  ...topologyRoutes
+  ...topologyRoutes,
+  ...dashboardRoutes
 ];
