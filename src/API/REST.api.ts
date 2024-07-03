@@ -13,7 +13,8 @@ import {
   CollectorsResponse,
   SitePairsResponse,
   ComponentPairsResponse,
-  UserResponse
+  UserResponse,
+  RouterResponse
 } from './REST.interfaces';
 import {
   getFlowsPairsByServicePATH,
@@ -40,7 +41,8 @@ import {
   getCollectors,
   getProcessPairsByServicePATH,
   logout,
-  getUser
+  getUser,
+  getRoutersPath
 } from './REST.paths';
 import { mapOptionsToQueryParams, getApiResults } from './REST.utils';
 
@@ -148,6 +150,15 @@ export const RESTApi = {
 
   fetchProcessGroup: async (id: string, options?: RemoteFilterOptions): Promise<ComponentResponse> => {
     const data = await axiosFetch<ResponseWrapper<ComponentResponse>>(getProcessGroupPATH(id), {
+      params: options ? mapOptionsToQueryParams(options) : null
+    });
+
+    return getApiResults(data);
+  },
+
+  // ROUTERS APis
+  fetchRouters: async (options?: RemoteFilterOptions): Promise<RouterResponse[]> => {
+    const data = await axiosFetch<ResponseWrapper<RouterResponse[]>>(getRoutersPath(), {
       params: options ? mapOptionsToQueryParams(options) : null
     });
 

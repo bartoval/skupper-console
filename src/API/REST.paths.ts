@@ -21,6 +21,10 @@ export const getHostsBySitePATH = (id: string) => `${SITES_PATH}${id}/hosts`;
 const HOSTS_PATH = `${COLLECTOR_URL}/hosts/`;
 export const getHostsPATH = () => HOSTS_PATH;
 
+// ROUTERS
+const ROUTERS_PATH = `${COLLECTOR_URL}/routers/`;
+export const getRoutersPath = () => ROUTERS_PATH;
+
 // LINKS
 const LINKS_PATH = `${COLLECTOR_URL}/links/`;
 export const getLinksPATH = () => LINKS_PATH;
