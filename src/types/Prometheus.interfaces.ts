@@ -41,6 +41,8 @@ export interface PrometheusLabels {
   protocol?: AvailableProtocols;
 }
 export interface PrometheusQueryParams extends PrometheusLabels {
+  groupBy?: string;
+  limit?: number;
   step: string;
   start: number;
   end: number;

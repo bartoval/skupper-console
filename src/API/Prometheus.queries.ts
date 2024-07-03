@@ -26,9 +26,17 @@ export const queries = {
     return `sum by(le)(floor(delta(flow_latency_microseconds_bucket{${param}}[${range}])))`;
   },
 
-  // data transfer queries
-  getByteRateByDirectionInTimeRange(param: string, range: IntervalTimePropValue) {
-    return `sum by(direction)(rate(octets_total{${param}}[${range}]))`;
+  getByteRateByDirectionInTimeRange(
+    param: string,
+    range: IntervalTimePropValue,
+    groupBy: string = 'direction',
+    limit?: number
+  ) {
+    if (limit) {
+      return `topk(${limit},sum by(${groupBy})(rate(octets_total{${param}}[${range}])))`;
+    }
+
+    return `sum by(${groupBy})(rate(octets_total{${param}}[${range}]))`;
   },
 
   // topology metrics

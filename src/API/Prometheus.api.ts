@@ -20,7 +20,12 @@ export const PrometheusApi = {
       data: { result }
     } = await axiosFetch<PrometheusResponse<'matrix'>>(gePrometheusQueryPATH(), {
       params: {
-        query: queries.getByteRateByDirectionInTimeRange(queryFilterString, '1m'),
+        query: queries.getByteRateByDirectionInTimeRange(
+          queryFilterString,
+          '1m',
+          queryParams.groupBy,
+          queryParams.limit
+        ),
         start,
         end,
         step
@@ -91,8 +96,8 @@ export const PrometheusApi = {
   fetchResponseCountsByPartialCodeInTimeRange: async (
     params: PrometheusQueryParams
   ): Promise<PrometheusMetric<'matrix'>[]> => {
-    const { start, end, step, ...queryParams } = params;
-    const queryFilterString = convertToPrometheusQueryParams({ ...queryParams, code: '2.*|3.*|4.*|5.*' });
+    const { start, end, step, code, ...queryParams } = params;
+    const queryFilterString = convertToPrometheusQueryParams({ ...queryParams, code: code || '2.*|3.*|4.*|5.*' });
 
     const {
       data: { result }
