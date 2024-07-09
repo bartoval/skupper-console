@@ -1,6 +1,7 @@
 import { ChartThemeColor } from '@patternfly/react-charts';
 import { Card, CardBody, CardTitle, Grid, GridItem, Title, TitleSizes } from '@patternfly/react-core';
 import { useSuspenseQueries } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 
 import { PrometheusApi } from '@API/Prometheus.api';
 import { decomposePrometheusSiteLabel, getTimeSeriesFromPrometheusData } from '@API/Prometheus.utils';
@@ -15,10 +16,10 @@ import { formatByteRate } from '@core/utils/formatBytes';
 import { formatToDecimalPlacesIfCents } from '@core/utils/formatToDecimalPlacesIfCents';
 import MainContainer from '@layout/MainContainer';
 import { CustomProcessPairCells } from '@pages/Processes/Processes.constants';
-import { ProcessesLabels, QueriesProcesses } from '@pages/Processes/Processes.enum';
-import { ComponentLabels, QueriesComponent } from '@pages/ProcessGroups/ProcessGroups.enum';
-import { QueriesServices, ServicesLabels } from '@pages/Services/Services.enum';
-import { QueriesSites, SiteLabels } from '@pages/Sites/Sites.enum';
+import { ProcessesLabels, ProcessesRoutesPaths, QueriesProcesses } from '@pages/Processes/Processes.enum';
+import { ComponentLabels, ComponentRoutesPaths, QueriesComponent } from '@pages/ProcessGroups/ProcessGroups.enum';
+import { QueriesServices, ServicesLabels, ServicesRoutesPaths } from '@pages/Services/Services.enum';
+import { QueriesSites, SiteLabels, SitesRoutesPaths } from '@pages/Sites/Sites.enum';
 import { TopologyRoutesPaths, TopologyViews } from '@pages/Topology/Topology.enum';
 
 import { DashboardLabels } from '../Dashboard.enum';
@@ -171,7 +172,7 @@ const Dashboard = function () {
     .filter((link) => link.direction === Direction.Outgoing)
     .reduce(
       (acc, link) => {
-        acc[link.sourceSiteId] = (acc[link.sourceSiteId] || 0) + 1;
+        acc[link.destinationSiteId] = (acc[link.destinationSiteId] || 0) + 1;
 
         return acc;
       },
@@ -224,7 +225,7 @@ const Dashboard = function () {
             <Card>
               <CardTitle>
                 <Title headingLevel="h1" size={TitleSizes['4xl']}>
-                  {sites.length}
+                  <Link to={SitesRoutesPaths.Sites}> {sites.length}</Link>
                 </Title>
               </CardTitle>
               <CardBody>{SiteLabels.Section}</CardBody>
@@ -234,7 +235,7 @@ const Dashboard = function () {
             <Card>
               <CardTitle>
                 <Title headingLevel="h1" size={TitleSizes['4xl']}>
-                  {components.results.length}
+                  <Link to={ComponentRoutesPaths.ProcessGroups}>{components.results.length}</Link>
                 </Title>
               </CardTitle>
               <CardBody>{ComponentLabels.Section}</CardBody>
@@ -244,7 +245,7 @@ const Dashboard = function () {
             <Card>
               <CardTitle>
                 <Title headingLevel="h1" size={TitleSizes['4xl']}>
-                  {processes.results.length}
+                  <Link to={ProcessesRoutesPaths.Processes}>{processes.results.length}</Link>
                 </Title>
               </CardTitle>
               <CardBody>{ProcessesLabels.Section}</CardBody>
@@ -254,7 +255,7 @@ const Dashboard = function () {
             <Card>
               <CardTitle>
                 <Title headingLevel="h1" size={TitleSizes['4xl']}>
-                  {services.results.length}
+                  <Link to={ServicesRoutesPaths.Services}> {services.results.length}</Link>
                 </Title>
               </CardTitle>
               <CardBody>{ServicesLabels.Section}</CardBody>
@@ -264,7 +265,7 @@ const Dashboard = function () {
           <GridItem span={12}>
             <SkTable
               isFullHeight
-              alwaysShowPagination={false}
+              alwaysShowPagination={true}
               title={'Site'}
               columns={InventoryColumns}
               rows={currentSiteValues}
@@ -325,7 +326,7 @@ const Dashboard = function () {
             <SkTable
               isFullHeight
               alwaysShowPagination={false}
-              title={'Top 10 Rx Byterate'}
+              title={'Top 10 Rx Byterate by Site'}
               columns={currentSiteColumns}
               rows={currentTxValues}
               pagination={false}
@@ -337,7 +338,7 @@ const Dashboard = function () {
             <SkTable
               isFullHeight
               alwaysShowPagination={false}
-              title={'Top 10 Tx byterate'}
+              title={'Top 10 Tx byterate by Site'}
               columns={currentSiteColumns}
               rows={currentRxValues}
               pagination={false}
