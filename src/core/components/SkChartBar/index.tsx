@@ -41,6 +41,7 @@ const SkChartBar: FC<SkChartBarProps> = function ({
   legendLabels = [],
   showLegend = true,
   height = 300,
+  isHorizontal = false,
   ...props
 }) {
   const observer = useRef<Function>(() => null);
@@ -118,7 +119,7 @@ const SkChartBar: FC<SkChartBarProps> = function ({
           tickFormat={(tick) => tick && formatY(tick < 0.001 ? 0 : tick)}
           showGrid
         />
-        <ChartGroup>
+        <ChartGroup horizontal={isHorizontal}>
           {data.map((row, index: number) => (
             <ChartBar key={index} data={row} name={legendData[index]?.name} barWidth={width / 10} />
           ))}

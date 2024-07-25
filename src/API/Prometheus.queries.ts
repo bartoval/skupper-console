@@ -64,6 +64,10 @@ export const queries = {
     return `sum by(${groupBy})(rate(flow_latency_microseconds_sum[1m]))`;
   },
 
+  getTotalAvgLatency(param: string) {
+    return `sum by(sourceSite)(flow_latency_microseconds_sum/flow_latency_microseconds_count{${param}})`;
+  },
+
   getTotalHttpFlowByService() {
     return `sum by(address)(flows_total{protocol=~"${AvailableProtocols.AllHttp}"}/2)`;
   },

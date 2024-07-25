@@ -1,3 +1,8 @@
+import { createServer, Response } from 'miragejs';
+
+import { AvailableProtocols, Direction } from '@API/REST.enum';
+import kubernetesIcon from '@assets/kubernetes.svg';
+import podmanIcon from '@assets/podman.svg';
 import {
   ServiceResponse,
   ProcessPairsResponse,
@@ -12,9 +17,6 @@ import {
   ComponentPairsResponse,
   SitePairsResponse
 } from '@sk-types/REST.interfaces';
-import { createServer, Response } from 'miragejs';
-
-import { AvailableProtocols, Direction } from '@API/REST.enum';
 
 const DELAY_RESPONSE = Number(process.env.MOCK_DELAY_RESPONSE) || 0; // in ms
 const ITEM_COUNT = Number(process.env.MOCK_ITEM_COUNT) || 0;

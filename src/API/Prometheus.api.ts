@@ -178,6 +178,19 @@ export const PrometheusApi = {
     return result;
   },
 
+  fetchTotalAvgLatency: async (params: PrometheusQueryParams): Promise<PrometheusMetric<'vector'>[]> => {
+    const { start, end, step, ...queryParams } = params;
+    const queryFilterString = convertToPrometheusQueryParams(queryParams);
+
+    const {
+      data: { result }
+    } = await axiosFetch<PrometheusResponse<'vector'>>(gePrometheusQueryPATH('single'), {
+      params: { query: queries.getTotalAvgLatency(queryFilterString), start, end, step }
+    });
+
+    return result;
+  },
+
   fetchTcpActiveFlowsByService: async (): Promise<PrometheusMetric<'vector'>[]> => {
     const {
       data: { result }
