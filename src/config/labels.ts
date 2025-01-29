@@ -4,6 +4,7 @@ export const Labels = {
   Components: 'Components',
   Services: 'Services',
   Topology: 'Topology',
+  PromqlBuilder: 'Query builder',
 
   Site: 'Site',
   Component: 'Component',

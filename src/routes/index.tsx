@@ -3,6 +3,7 @@ import { Navigate, RouteObject } from 'react-router-dom';
 import { componentsRoutes } from './componentRoutes';
 import { errorsRoutes } from './errorRoutes';
 import { processesRoutes } from './processRoutes';
+import { PromqlBuilderRoutes } from './promqlBuilderRoutes';
 import { servicesRoutes } from './serviceRoutes';
 import { siteRoutes } from './siteRoutes';
 import { topologyRoutes } from './topologyRoutes';
@@ -15,5 +16,6 @@ export const routes: RouteObject[] = [
   ...componentsRoutes,
   ...processesRoutes,
   ...errorsRoutes,
-  ...topologyRoutes
+  ...topologyRoutes,
+  ...PromqlBuilderRoutes
 ];
