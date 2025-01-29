@@ -17,7 +17,9 @@ export const defaultTimeInterval = Object.values(timeIntervalMap)[0];
 
 export enum PrometheusLabelsV2 {
   SourceSiteId = 'source_site_id',
+  SourceSiteName = 'source_site_name',
   DestSiteId = 'dest_site_id',
+  DestSiteName = 'dest_site_name',
   SourceProcessName = 'source_process_name',
   DestProcessName = 'dest_process_name',
   SourceComponentName = 'source_component_name',

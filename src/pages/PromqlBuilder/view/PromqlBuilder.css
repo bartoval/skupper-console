@@ -1,0 +1,3 @@
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row * {
+  text-decoration: none !important;
+}

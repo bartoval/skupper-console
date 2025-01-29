@@ -60,6 +60,7 @@ export interface PrometheusLabels {
 export interface PrometheusQueryParams extends PrometheusLabels {
   start: number;
   end: number;
+  query?: string;
 }
 
 export interface PrometheusQueryParamsLatency extends PrometheusQueryParams {

@@ -2,6 +2,9 @@ import { queries } from './Prometheus.queries';
 import { executeQuery, getPrometheusResolutionInSeconds } from './Prometheus.utils';
 import { PrometheusQueryParams, PrometheusLabels, PrometheusQueryParamsLatency } from '../types/Prometheus.interfaces';
 
+const fetchCustomQuery = async (params: PrometheusQueryParams) =>
+  executeQuery(() => params.query || '', params, 'matrix');
+
 const fetchByteRateHistory = async (params: PrometheusQueryParams, isRx = false) => {
   const interval = getPrometheusResolutionInSeconds(params.end - params.start).loopback;
 
@@ -49,6 +52,7 @@ const fetchInstantTrafficValue = async (
 };
 
 export const PrometheusApi = {
+  fetchCustomQuery,
   fetchByteRateHistory,
   fetchPercentilesByLeHistory,
   fetchRequestRateByMethodHistory,

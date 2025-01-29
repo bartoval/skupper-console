@@ -43,6 +43,7 @@
     "@patternfly/react-tokens": "6.1.0",
     "@tanstack/react-query": "5.66.0",
     "axios": "1.7.9",
+    "monaco-editor": "^0.52.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-error-boundary": "5.0.0",
