@@ -1,3 +1,7 @@
 .monaco-editor .suggest-widget .monaco-list .monaco-list-row * {
   text-decoration: none !important;
 }
+
+.monaco-editor .monaco-hover-content .action-container {
+  display: none;
+}
