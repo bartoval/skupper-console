@@ -104,3 +104,80 @@ const getChartDynamicPaddingLeft = (data: skAxisXY[][], formatY: (y: number) => 
 };
 
 export { calculateTickDensity, getChartDynamicPaddingLeft };
+
+/**
+ * Filters an array of data series (`skAxisXY[][]`) based on a specified x and y range,
+ * ensuring a minimum x-axis range of 5 seconds. If the specified range is smaller than 5 seconds,
+ * it expands the range while staying within the bounds of the provided data.
+ * The function returns the filtered data, unless all data series become empty after filtering,
+ * in which case it returns the original, unfiltered data.
+ */
+export function filterDataByRange(data: skAxisXY[][], range?: { x: number[]; y: number[] }): skAxisXY[][] {
+  if (!range || !range.x || !range.y) {
+    return data; // If no range is specified, return the original data
+  }
+
+  let [minX, maxX] = range.x;
+  const [minY, maxY] = range.y;
+
+  const minRange = 3; // Minimum range width in seconds
+  const currentRange = maxX - minX;
+
+  if (currentRange < minRange) {
+    const diff = minRange - currentRange;
+    const increaseEachSide = diff / 2;
+
+    minX = minX - increaseEachSide;
+    maxX = maxX + increaseEachSide;
+
+    // Ensure the values don't go out of bounds of the data
+    const firstDataPoint = data[0][0];
+    const lastDataPoint = data[0][data[0].length - 1];
+
+    if (firstDataPoint && lastDataPoint) {
+      if (minX < firstDataPoint.x) {
+        minX = firstDataPoint.x;
+        maxX = minX + minRange;
+      }
+      if (maxX > lastDataPoint.x) {
+        maxX = lastDataPoint.x;
+        minX = maxX - minRange;
+      }
+    }
+  }
+
+  const filteredData = data.map((series) =>
+    series.filter((item) => item.x >= minX && item.x <= maxX && item.y >= minY && item.y <= maxY)
+  );
+
+  // Check if all inner arrays are empty
+  const allArraysEmpty = filteredData.every((series) => series.length === 0);
+
+  // If all inner arrays are empty, return the original data
+  return allArraysEmpty ? data : filteredData;
+}
+
+export const calculateCustomTickValues = (data: skAxisXY[][], tickCount: number): number[] => {
+  const allValues = data.flat().map((point) => point.y);
+  const max = Math.max(...allValues);
+  const min = Math.min(...allValues);
+
+  // Calcola un nuovo valore massimo che sia leggermente superiore al valore massimo dei dati
+  const topPadding = (max - min) * 0.1; // Aggiunge il 10% del range come padding
+  const newMax = max + topPadding;
+
+  const highTickCount = Math.ceil(tickCount / 2);
+  const lowTickCount = Math.floor(tickCount / 2);
+
+  // Usa newMax per calcolare i tick più alti
+  const highTicks = Array.from(
+    { length: highTickCount },
+    (_, i) => newMax - (i * (newMax - newMax / 2)) / (highTickCount - 1)
+  );
+
+  const lowTicks = Array.from({ length: lowTickCount }, (_, i) => min + (i * (min * 5)) / (lowTickCount - 1));
+
+  return [...new Set([...highTicks, ...lowTicks])]
+    .sort((a, b) => a - b)
+    .filter((tick) => tick >= min && tick <= newMax);
+};

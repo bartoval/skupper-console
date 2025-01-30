@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState, useCallback } from 'react';
 
 import {
   ChartProps,
@@ -12,9 +12,15 @@ import {
   ChartLine,
   ChartLabel
 } from '@patternfly/react-charts/victory';
+import { Button } from '@patternfly/react-core';
 
 import { CHART_CONFIG } from './SkChartArea.constants';
-import { calculateTickDensity, getChartDynamicPaddingLeft } from './SkChartArea.utils';
+import {
+  calculateCustomTickValues,
+  calculateTickDensity,
+  filterDataByRange,
+  getChartDynamicPaddingLeft
+} from './SkChartArea.utils';
 import { useChartDimensions } from '../../../../hooks/useChartDimensions';
 import { skAxisXY } from '../../../../types/SkCharts';
 import { formatChartDateByRange } from '../../../utils/formatChartDateByRange';
@@ -34,7 +40,7 @@ interface SkChartAreaProps extends ChartProps {
 const SkChartArea: FC<SkChartAreaProps> = function ({
   data,
   formatY = (y: number) => y,
-  formatX = (timestamp, range) => formatChartDateByRange(timestamp, range),
+  formatX = (timestamp: number, range: number) => formatChartDateByRange(timestamp, range),
   axisYLabel,
   legendLabels = [],
   showLegend = true,
@@ -46,14 +52,21 @@ const SkChartArea: FC<SkChartAreaProps> = function ({
   padding = CHART_CONFIG.LAYOUT.DEFAULT_PADDING,
   ...props
 }) {
-  const CursorVoronoiContainer = useMemo(() => createContainer('voronoi', 'cursor'), []);
+  // 1. Container and Dimensions
+  const CursorVoronoiContainer = useMemo(() => createContainer('voronoi', 'brush'), []);
   const { chartWidth, chartContainerRef } = useChartDimensions();
 
-  const legendData = legendLabels.map((label) => ({ childName: label, name: label }));
-  const startDate = data[0]?.[0]?.x ?? 0;
-  const endDate = data[data.length - 1]?.[data[0]?.length - 1]?.x ?? startDate + 1000;
+  // 2. State Management
+  const [brushDomain, setBrushDomain] = useState<{ x: number[]; y: number[] } | undefined>(undefined);
+  const [isDragging, setIsDragging] = useState(false);
 
-  // tick count calculation
+  // 3. Data Processing and Memoization
+  const filteredData = useMemo(() => filterDataByRange(data, brushDomain), [data, brushDomain]); // useMemo here
+  const legendData = useMemo(() => legendLabels.map((label) => ({ childName: label, name: label })), [legendLabels]);
+  const startDate = filteredData[0]?.[0]?.x ?? 0;
+  const endDate = filteredData[filteredData.length - 1]?.[filteredData[0]?.length - 1]?.x ?? startDate + 1000;
+
+  // 4. Tick Calculation
   const tickYCount = useMemo(
     () =>
       Math.max(
@@ -75,12 +88,40 @@ const SkChartArea: FC<SkChartAreaProps> = function ({
     [chartWidth]
   );
 
-  // Dynamic padding calculation
-  const dynamicPaddingLeft = getChartDynamicPaddingLeft(data, formatY);
-  const calculatedPadding = { ...padding, left: dynamicPaddingLeft };
+  // 5. Brush Handlers (useCallback for stable references)
+  const handleBrush = useCallback(() => {
+    setIsDragging(true);
+  }, []);
 
+  const handleBrushEnd = useCallback(
+    (zoom: { x: number[]; y: number[] }) => {
+      setBrushDomain(zoom);
+      setIsDragging(false);
+    },
+    [setBrushDomain, setIsDragging]
+  );
+
+  const handleBrushClear = useCallback(() => {
+    setBrushDomain(undefined);
+  }, [setBrushDomain]);
+
+  // 6. Dynamic Padding
+  const dynamicPaddingLeft = useMemo(() => getChartDynamicPaddingLeft(filteredData, formatY), [filteredData, formatY]);
+  const calculatedPadding = useMemo(() => ({ ...padding, left: dynamicPaddingLeft }), [padding, dynamicPaddingLeft]);
+
+  // 7. Custom Tick Values
+  const customTickValues = useMemo(
+    () => calculateCustomTickValues(filteredData, tickYCount),
+    [filteredData, tickYCount]
+  );
+
+  // 9. Render
   return (
     <div ref={chartContainerRef} style={{ height: `${height}px` }}>
+      <Button isDisabled={!brushDomain} variant="control" onClick={handleBrushClear}>
+        Reset zoom
+      </Button>
+
       {chartWidth > 0 && (
         <Chart
           width={chartWidth}
@@ -92,8 +133,13 @@ const SkChartArea: FC<SkChartAreaProps> = function ({
           padding={calculatedPadding}
           containerComponent={
             <CursorVoronoiContainer
-              cursorDimension="x"
+              brushDimension="x"
+              brushStyle={{ stroke: 'transparent', fill: isDragging ? 'black' : 'transparent', fillOpacity: 0.1 }}
+              defaultBrushArea={'none'}
+              onBrushDomainChange={handleBrush}
+              onBrushDomainChangeEnd={handleBrushEnd}
               voronoiDimension="x"
+              handleWidth={0}
               labels={({ datum }: { datum: skAxisXY }) => formatY(datum.y)}
               labelComponent={
                 <ChartLegendTooltip
@@ -133,7 +179,6 @@ const SkChartArea: FC<SkChartAreaProps> = function ({
           <ChartAxis
             label={axisYLabel}
             dependentAxis
-            minDomain={0}
             style={{
               tickLabels: { fontSize: CHART_CONFIG.AXIS.DEFAULT_FONT_SIZE },
               axisLabel: {
@@ -141,12 +186,13 @@ const SkChartArea: FC<SkChartAreaProps> = function ({
                 padding: CHART_CONFIG.AXIS.LABEL_PADDING
               }
             }}
-            tickCount={tickYCount}
+            domain={[Math.min(...customTickValues), Math.max(...customTickValues)]}
+            tickValues={customTickValues}
             tickFormat={(tick) => tick && formatY(tick < 0.001 ? 0 : tick)}
             showGrid
           />
           <ChartGroup>
-            {data.map((series, index) =>
+            {filteredData.map((series, index) =>
               isChartLine ? (
                 <ChartLine key={index} data={series} name={legendData[index]?.name} />
               ) : (

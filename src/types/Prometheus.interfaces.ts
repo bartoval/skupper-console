@@ -3,7 +3,7 @@ import { Direction, Protocols, Quantiles } from '../API/REST.enum';
 // Common base type for result types
 type PrometheusResultType = 'matrix' | 'vector' | 'scalar' | 'string';
 
-interface MatrixMetric {
+export interface MatrixMetric {
   metric: { [key: string]: string };
   values: [number, number | typeof NaN][];
 }

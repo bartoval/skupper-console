@@ -4,7 +4,7 @@ export const Labels = {
   Components: 'Components',
   Services: 'Services',
   Topology: 'Topology',
-  PromqlBuilder: 'Query builder',
+  PromqlBuilder: 'PromQL editor',
 
   Site: 'Site',
   Component: 'Component',
@@ -166,6 +166,7 @@ export const Labels = {
   ConsoleError: 'An error occurred on client side',
   NoMetricFound: 'No metrics found',
   NoBiflowFound: 'No connections or requests to display',
+  NoEntriesQueryFound: 'The query result is empty',
 
   NoDataFound: 'No data found',
   NoLinkFound: 'No link found',
@@ -189,5 +190,18 @@ export const Labels = {
   ByteRateDataOutDescription: 'Client Role',
   ByteRateDataInDescription: 'Server Role',
   LatencyOutDescription: 'Connector Request to First Server Response',
-  LatencyInDescription: 'Listener Request to First Client Response'
-} as const; // makes sure that all values are treated as literal types
+  LatencyInDescription: 'Listener Request to First Client Response',
+
+  NoEntriesQueryFoundDescription:
+    'No items are currently accessible or meet the filter criteria. Please modify all filters, then attempt execute the query again.',
+
+  SelectAll: 'Select All',
+  UnselectAll: 'Unselect All',
+
+  PromQlPlaceHolder: 'Press Ctrl+Space to open suggestions',
+  PromQlTitle: 'Prometheus Query Language',
+  PromQlDescription: 'It allows you to construct queries and view the results as interactive line charts',
+  PromQlListTitle: 'Prometheus Query Results',
+  PromQlListDescription:
+    'Each entry corresponds to a line in the chart above, identified by its color. Hovering over a row filters the chart to show only that corresponding line'
+} as const;

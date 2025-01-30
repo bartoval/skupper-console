@@ -50,7 +50,12 @@ const TopologyProcesses: FC<{
   const { idsSelected, searchText, displayOptionsSelected, handleSelected, handleSearchText, handleDisplaySelected } =
     useTopologyState({
       ids: processIds,
-      initDisplayOptionsEnabled: [SHOW_DEPLOYMENTS, SHOW_LINK_METRIC_VALUE],
+      initDisplayOptionsEnabled: [
+        SHOW_DEPLOYMENTS,
+        SHOW_LINK_BYTERATE,
+        SHOW_LINK_METRIC_DISTRIBUTION,
+        SHOW_LINK_METRIC_VALUE
+      ],
       //name of the configuration to be saved in the localstorage
       displayOptionsEnabledKey: 'display-process-options'
     });
