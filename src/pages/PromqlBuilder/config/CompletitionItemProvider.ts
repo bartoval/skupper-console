@@ -4,6 +4,7 @@ import type { editor, Position } from 'monaco-editor';
 import { tokenTypeConfig, tokenTypeToParams } from './completition/tokenTypeConfig';
 import { ValidTokenType } from '../../../types/PromBuilder.interfaces';
 import { getTokenType } from '../utils/tokenAnalysis';
+import { getTemplateSuggestions } from './completition/suggestions/getTemplateSuggestion';
 
 const TRIGGER_CHARACTERS = ['(', '{', '[', '.', ' ', ...'0123456789'];
 
@@ -17,30 +18,30 @@ const addSortText = (items: languages.CompletionItem[]): languages.CompletionIte
     sortText: s.kind === languages.CompletionItemKind.Snippet ? SNIPPET_SORT_ORDER : OTHER_SORT_ORDER
   }));
 
-// const getExpandedTemplateMatch = (word: string, lineContent: string): { template: string; param: string } | null => {
-//   const responsesByCodeRegex =
-//     /sum by\(partial_code\)\(label_replace\(increase\((metric)\{(params)\}\[(range)\]\),"partial_code", "\$1", "(codeLabel)","(.*).{2}"\)\)/;
-//   const match = lineContent.match(responsesByCodeRegex);
+const getExpandedTemplateMatch = (word: string, lineContent: string): { template: string; param: string } | null => {
+  const responsesByCodeRegex =
+    /sum by\(partial_code\)\(label_replace\(increase\((metric)\{(params)\}\[(range)\]\),"partial_code", "\$1", "(codeLabel)","(.*).{2}"\)\)/;
+  const match = lineContent.match(responsesByCodeRegex);
 
-//   if (match) {
-//     const [, metric, params, range, codeLabel] = match;
+  if (match) {
+    const [, metric, params, range, codeLabel] = match;
 
-//     if (word === 'metric' && metric === word) {
-//       return { template: 'responsesByCode', param: 'metric' };
-//     }
-//     if (word === 'params' && params === word) {
-//       return { template: 'responsesByCode', param: 'params' };
-//     }
-//     if (word === 'range' && range === word) {
-//       return { template: 'responsesByCode', param: 'range' };
-//     }
-//     if (word === 'codeLabel' && codeLabel === word) {
-//       return { template: 'responsesByCode', param: 'codeLabel' };
-//     }
-//   }
+    if (word === 'metric' && metric === word) {
+      return { template: 'responsesByCode', param: 'metric' };
+    }
+    if (word === 'params' && params === word) {
+      return { template: 'responsesByCode', param: 'params' };
+    }
+    if (word === 'range' && range === word) {
+      return { template: 'responsesByCode', param: 'range' };
+    }
+    if (word === 'codeLabel' && codeLabel === word) {
+      return { template: 'responsesByCode', param: 'codeLabel' };
+    }
+  }
 
-//   return null;
-// };
+  return null;
+};
 
 export const completionItemProvider: languages.CompletionItemProvider = {
   triggerCharacters: TRIGGER_CHARACTERS,
@@ -51,6 +52,7 @@ export const completionItemProvider: languages.CompletionItemProvider = {
       endLineNumber: position.lineNumber,
       endColumn: position.column
     });
+
     const currentWord = model.getWordUntilPosition(position).word.toLowerCase();
     const tokenType = getTokenType(textUntilPosition, position.column);
     const range = {
@@ -61,8 +63,24 @@ export const completionItemProvider: languages.CompletionItemProvider = {
     };
 
     let suggestions: languages.CompletionItem[] = [];
+    let placeholderSuggestions: languages.CompletionItem[] = [];
 
-    if (tokenType.type in tokenTypeToParams) {
+    const lineContent = model.getLineContent(position.lineNumber);
+    const expandedMatch = getExpandedTemplateMatch(currentWord, lineContent);
+    if (expandedMatch) {
+      placeholderSuggestions = getTemplateSuggestions({
+        range: {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: position.column,
+          endColumn: position.column
+        },
+        templateMatch: {
+          template: expandedMatch?.template || '',
+          param: expandedMatch?.param || ''
+        }
+      });
+    } else if (tokenType.type in tokenTypeToParams) {
       const params = tokenTypeToParams[tokenType.type as ValidTokenType](range, tokenType, textUntilPosition, position);
       suggestions = addSortText(tokenTypeConfig[tokenType.type as ValidTokenType](params as any));
     } else if (tokenType.type === 'grouping-and-binary') {
@@ -78,18 +96,8 @@ export const completionItemProvider: languages.CompletionItemProvider = {
       return label.toLowerCase().includes(currentWord);
     };
 
-    // const lineContent = model.getLineContent(position.lineNumber);
-    // const expandedMatch = getExpandedTemplateMatch(currentWord, lineContent);
-
-    // const templateSuggestions = getTemplateSuggestions({
-    //   range,
-    //   templateMatch: {
-    //     template: expandedMatch?.template || '',
-    //     param: expandedMatch?.param || ''
-    //   }
-    // });
     const filteredSuggestions = tokenType.type === 'time-range' ? suggestions : suggestions.filter(filterSuggestions);
 
-    return { suggestions: [...filteredSuggestions] };
+    return { suggestions: [...placeholderSuggestions, ...filteredSuggestions] };
   }
 };

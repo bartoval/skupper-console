@@ -24,35 +24,53 @@ export const getTimeUnitSuggestions = ({
   tokenType,
   textUntilPosition,
   position
-}: TimeUnitSuggestionsProps & {
-  textUntilPosition?: string;
-  position?: Position;
-}): languages.CompletionItem[] => {
-  let suggestions: languages.CompletionItem[] = [];
+}: TimeUnitSuggestionsProps): languages.CompletionItem[] => {
+  if (!position || !textUntilPosition) {
+    return [];
+  }
 
-  if (tokenType.type === 'time-range' && textUntilPosition && position) {
-    // Find the last opened square bracket
+  const suggestions: languages.CompletionItem[] = [];
+
+  if (tokenType.type === 'time-range' || tokenType.type === 'subquery') {
     const lastOpenBracket = textUntilPosition.lastIndexOf('[');
+    if (lastOpenBracket === -1) {
+      return [];
+    }
 
-    if (lastOpenBracket !== -1) {
-      // Get text after the bracket to check for numbers
-      const textInsideBracket = textUntilPosition.substring(lastOpenBracket + 1);
+    const textInsideBracket = textUntilPosition.substring(lastOpenBracket + 1);
+    const isAfterColon = textInsideBracket.includes(':');
 
-      // If there's a number after the bracket
-      if (/\d+$/.test(textInsideBracket)) {
-        suggestions = TIME_UNITS.map((unit) => ({
-          label: { label: unit.value, description: unit.description },
-          kind: languages.CompletionItemKind.Value,
-          insertText: unit.value,
-          detail: unit.description,
-          range: {
-            startLineNumber: position.lineNumber,
-            endLineNumber: position.lineNumber,
-            startColumn: position.column,
-            endColumn: position.column
-          }
-        }));
-      }
+    // Handle subquery step suggestions
+    if (isAfterColon && /:\d+$/.test(textInsideBracket)) {
+      return TIME_UNITS.map((unit) => ({
+        label: { label: unit.value, description: `Step ${unit.description}` },
+        kind: languages.CompletionItemKind.Value,
+        insertText: `${unit.value}]`,
+        detail: `Step unit - ${unit.description}`,
+        range: {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: position.column,
+          endColumn: position.column
+        }
+      }));
+    }
+
+    // Handle range suggestions (both for simple range and subquery range)
+    if (/\d+$/.test(textInsideBracket)) {
+      return TIME_UNITS.map((unit) => ({
+        label: { label: unit.value, description: unit.description },
+        kind: languages.CompletionItemKind.Value,
+        // If we're in a subquery context but not after the colon, add the colon
+        insertText: tokenType.type === 'subquery' && !isAfterColon ? `${unit.value}:` : `${unit.value}]`,
+        detail: `Range unit - ${unit.description}`,
+        range: {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: position.column,
+          endColumn: position.column
+        }
+      }));
     }
   }
 
